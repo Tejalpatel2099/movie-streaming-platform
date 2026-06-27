@@ -142,14 +142,3 @@ Open **http://localhost:3000**
 > ℹ️ **A note for interviews:** if your resume cites specific numbers like *"5,000+ concurrent users"* or *"35% latency reduction,"* be ready to say how you measured them. The code contains the *techniques* that support those claims (pooling, caching, indexing, batching), but the exact figures need a load test (e.g. JMeter/k6) to cite honestly. Run one and you can keep the numbers with confidence — or talk about the techniques instead.
 
 ---
-
-## 🖼 Diagram Assets
-
-The architecture, data-model, and request-flow diagrams live in [`/docs`](docs/) as SVG (crisp at any zoom, render natively on GitHub and in VS Code). Re-render or edit them anytime — they're plain text SVG.
-
-```
-docs/
-├── architecture.svg
-├── data-model.svg
-└── request-flow.svg
-```
