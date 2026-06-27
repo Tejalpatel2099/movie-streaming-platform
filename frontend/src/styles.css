@@ -5,10 +5,24 @@
 }
 
 body {
-  background: #0a0a0a;
+  background: #07070b;
   color: #fff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
+}
+
+/* Ambient cinematic glow behind everything — gives the glass surfaces
+   something colourful to refract. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vw 60vw at 12% -10%, rgba(229, 9, 20, 0.18), transparent 60%),
+    radial-gradient(50vw 50vw at 100% 0%, rgba(99, 102, 241, 0.14), transparent 55%),
+    radial-gradient(45vw 45vw at 50% 120%, rgba(168, 85, 247, 0.12), transparent 60%);
 }
 
 a {
@@ -118,98 +132,128 @@ a {
 
 /* Sections */
 .section {
-  padding: 32px 40px;
+  padding: 40px;
+  border-top: 1px solid #222;
+}
+
+.section h2 {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 28px;
+  letter-spacing: -0.5px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   flex-wrap: wrap;
-  gap: 16px;
-}
-
-.section h2 {
-  font-size: 24px;
+  gap: 20px;
 }
 
 .genre-filter {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .genre-filter button {
-  padding: 6px 16px;
+  padding: 8px 18px;
   background: transparent;
-  border: 1px solid #333;
+  border: 1.5px solid #444;
   color: #ccc;
-  border-radius: 20px;
+  border-radius: 24px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s;
+  text-transform: capitalize;
+}
+
+.genre-filter button:hover {
+  border-color: #e50914;
+  color: #e50914;
 }
 
 .genre-filter button.active {
   background: #e50914;
   color: #fff;
   border-color: #e50914;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
 }
 
 /* Movie Cards */
 .movie-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  gap: 24px;
 }
 
 .movie-row {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  gap: 24px;
 }
 
 .movie-card {
   background: #1a1a1a;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  transition: transform 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
 .movie-card:hover {
-  transform: scale(1.05);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(229, 9, 20, 0.3);
 }
 
 .movie-card img {
   width: 100%;
-  height: 300px;
+  height: 320px;
   object-fit: cover;
+  transition: filter 0.3s ease;
+}
+
+.movie-card:hover img {
+  filter: brightness(1.1);
 }
 
 .movie-info {
-  padding: 12px;
+  padding: 16px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4));
+  position: relative;
+  z-index: 2;
 }
 
 .movie-info h3 {
   font-size: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #fff;
 }
 
 .meta {
   display: flex;
   gap: 12px;
-  color: #888;
-  font-size: 13px;
-  margin-bottom: 8px;
+  color: #aaa;
+  font-size: 12px;
+  margin-bottom: 10px;
 }
 
 .genre-tag {
   display: inline-block;
-  padding: 2px 8px;
-  background: #2a2a2a;
+  padding: 4px 10px;
+  background: #e50914;
   border-radius: 4px;
   font-size: 11px;
-  color: #ccc;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 /* Auth */
@@ -476,103 +520,180 @@ a {
 .hero-banner {
   min-height: 75vh;
   background-size: cover;
-  background-position: center top;
+  background-position: center;
   display: flex;
   align-items: flex-end;
-  padding: 60px;
+  padding: 80px 60px;
   margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,0.9) 100%);
+  pointer-events: none;
 }
 
 .hero-content {
   max-width: 600px;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-badge {
   display: inline-block;
-  background: #e50914;
-  padding: 4px 12px;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #e50914, #ff1a2e);
+  padding: 6px 14px;
+  border-radius: 6px;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 16px;
+  letter-spacing: 1.2px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.4);
 }
 
 .hero-title {
-  font-size: 64px;
-  font-weight: 800;
+  font-size: 72px;
+  font-weight: 900;
   line-height: 1.1;
-  margin-bottom: 16px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+  margin-bottom: 20px;
+  text-shadow: 3px 3px 12px rgba(0, 0, 0, 0.9);
+  letter-spacing: -1px;
 }
 
 .hero-meta {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   align-items: center;
-  margin-bottom: 16px;
-  color: #ddd;
+  margin-bottom: 20px;
+  color: #e0e0e0;
   font-size: 15px;
   flex-wrap: wrap;
 }
 
 .rating-badge {
-  background: rgba(229, 9, 20, 0.9);
-  padding: 2px 10px;
-  border-radius: 4px;
-  font-weight: 600;
+  background: rgba(229, 9, 20, 0.95);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .hero-description {
-  font-size: 17px;
-  line-height: 1.5;
-  color: #eee;
-  margin-bottom: 24px;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  font-size: 18px;
+  line-height: 1.6;
+  color: #f0f0f0;
+  margin-bottom: 28px;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+  max-width: 550px;
 }
 
 .hero-actions {
   display: flex;
-  gap: 12px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
 
 .btn-play,
 .btn-info {
-  padding: 12px 28px;
-  border-radius: 4px;
+  padding: 14px 32px;
+  border-radius: 6px;
   font-weight: 700;
   font-size: 16px;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.2s;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .btn-play {
   background: #fff;
   color: #000;
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 
 .btn-play:hover {
-  background: #ccc;
-  color: #000 !important;
+  background: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 255, 255, 0.3);
 }
 
 .btn-info {
-  background: rgba(109, 109, 110, 0.7);
+  background: rgba(109, 109, 110, 0.8);
   color: #fff;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-info:hover {
-  background: rgba(109, 109, 110, 0.9);
-  color: #fff !important;
+  background: rgba(150, 150, 151, 0.9);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .search-section {
-  padding: 0 40px 32px;
+  padding: 24px 40px 32px;
   display: flex;
   justify-content: center;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  gap: 10px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 14px 18px;
+  background: rgba(26, 26, 26, 0.9);
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 16px;
+  transition: all 0.3s;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #e50914;
+  background: rgba(26, 26, 26, 1);
+  box-shadow: 0 0 12px rgba(229, 9, 20, 0.2);
+}
+
+.search-bar button {
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #e50914, #ff1a2e);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 16px;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+}
+
+.search-bar button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(229, 9, 20, 0.4);
 }
 
 /* Make posters proper movie-poster ratio */
@@ -584,15 +705,175 @@ a {
 
 @media (max-width: 768px) {
   .hero-banner {
-    padding: 30px;
+    padding: 40px 30px;
     min-height: 60vh;
   }
 
   .hero-title {
-    font-size: 36px;
+    font-size: 40px;
   }
 
   .hero-description {
-    font-size: 14px;
+    font-size: 15px;
   }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .btn-play,
+  .btn-info {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================================
+   Glassmorphism layer — frosted, translucent surfaces with
+   blur, layered borders and soft glow. Appended last so these
+   rules win the cascade over the base styles above.
+   ============================================================ */
+
+/* Frosted sticky navbar */
+.navbar {
+  background: rgba(12, 12, 18, 0.55);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+}
+
+.logo {
+  text-shadow: 0 0 18px rgba(229, 9, 20, 0.55);
+}
+
+/* Glassy search bar */
+.search-bar input {
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.search-bar input:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(229, 9, 20, 0.6);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15), 0 0 18px rgba(229, 9, 20, 0.25);
+}
+
+/* Glassy genre pills */
+.genre-filter button {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e5e5e5;
+}
+
+.genre-filter button:hover {
+  background: rgba(229, 9, 20, 0.12);
+  border-color: rgba(229, 9, 20, 0.6);
+  color: #fff;
+}
+
+.genre-filter button.active {
+  background: linear-gradient(135deg, rgba(229, 9, 20, 0.9), rgba(255, 26, 46, 0.9));
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+}
+
+/* Glass movie cards */
+.movie-card {
+  background: rgba(255, 255, 255, 0.045);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+}
+
+.movie-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  padding: 1px;
+  background: linear-gradient(140deg, rgba(255, 255, 255, 0.35), transparent 40%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.movie-card:hover {
+  transform: translateY(-10px) scale(1.025);
+  border-color: rgba(229, 9, 20, 0.45);
+  box-shadow: 0 18px 40px rgba(229, 9, 20, 0.28), 0 0 0 1px rgba(229, 9, 20, 0.2);
+}
+
+.movie-info {
+  background: linear-gradient(to top, rgba(10, 10, 14, 0.92), rgba(10, 10, 14, 0.35));
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.genre-tag {
+  background: rgba(229, 9, 20, 0.85);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 2px 10px rgba(229, 9, 20, 0.35);
+}
+
+/* Glass dashboard surfaces */
+.kpi-card,
+.chart-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+.kpi-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+}
+
+/* Glass auth card */
+.auth-form {
+  background: rgba(18, 18, 26, 0.55);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.auth-form input {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: rgba(229, 9, 20, 0.6);
+  box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.15);
+}
+
+/* Frosted info button on the hero */
+.btn-info {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.btn-info:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
