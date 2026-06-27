@@ -123,10 +123,34 @@ export default function Home() {
   )
 }
 
+// Styled poster placeholder used if a remote image ever fails to load,
+// so a card never falls back to a broken-image icon.
+function posterFallback(title) {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='600'>
+    <defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0' stop-color='#1f1f29'/><stop offset='1' stop-color='#0a0a0a'/>
+    </linearGradient></defs>
+    <rect width='400' height='600' fill='url(#g)'/>
+    <text x='50%' y='48%' fill='#e50914' font-size='64' font-family='sans-serif'
+      font-weight='bold' text-anchor='middle'>★</text>
+    <text x='50%' y='58%' fill='#cccccc' font-size='22' font-family='sans-serif'
+      text-anchor='middle'>${title.replace(/[<&>]/g, '')}</text>
+  </svg>`
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`
+}
+
 function MovieCard({ movie }) {
   return (
     <Link to={`/movie/${movie.id}`} className="movie-card">
-      <img src={movie.thumbnailUrl} alt={movie.title} loading="lazy" />
+      <img
+        src={movie.thumbnailUrl}
+        alt={movie.title}
+        loading="lazy"
+        onError={(e) => {
+          e.target.onerror = null
+          e.target.src = posterFallback(movie.title)
+        }}
+      />
       <div className="movie-info">
         <h3>{movie.title}</h3>
         <div className="meta">
