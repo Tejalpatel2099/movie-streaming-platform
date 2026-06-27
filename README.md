@@ -13,10 +13,33 @@ Distributed movie streaming platform built with **Java Spring Boot** (3 microser
 
 ---
 
+## ✨ Recent Updates
+
+- **Real movie posters** — the catalog now serves authentic theatrical posters for all 12 public-domain classics from Wikimedia (the previous `source.unsplash.com` source was discontinued). Each card also has a graceful styled fallback, so a failed image never shows a broken icon.
+- **Glassmorphism UI** — frosted, translucent surfaces with backdrop blur, gradient borders and soft glow across the navbar, movie cards, search bar, genre filters, dashboard cards and auth forms, over an ambient cinematic background.
+
+---
+
 ## 🏗 Architecture
 
 Three independently deployable Spring Boot services — each with its own port and its own database. The frontend talks directly to the User and Movie services; the Analytics service composes data from both over HTTP.
 
+```
+                ┌─────────────────────────┐
+                │   React + Vite (3000)    │
+                └───────────┬─────────────┘
+            ┌───────────────┼────────────────┐
+            ▼               ▼                 ▼
+   ┌────────────────┐ ┌────────────────┐ ┌────────────────────┐
+   │  User Service  │ │ Movie Service  │ │ Analytics Service  │
+   │     (8081)     │ │    (8082)      │ │      (8083)        │
+   │  H2 · users    │ │ H2 · movies,   │ │  no DB — read-time │
+   │                │ │  view_events   │ │  composition       │
+   └────────────────┘ └────────────────┘ └─────────┬──────────┘
+            ▲                  ▲                    │
+            └──────────────────┴────────────────────┘
+                 WebClient fan-out (GET /…/stats)
+```
 
 **Why it's built this way**
 
@@ -43,6 +66,20 @@ Three independently deployable Spring Boot services — each with its own port a
 
 Two services own data. The link from `VIEW_EVENT` to a user is a **logical reference, not a SQL foreign key** — because the user lives in a *different* service's database. This is the classic microservices trade-off, and the reason the Analytics service exists.
 
+```
+User Service                 Movie Service
+┌──────────────┐             ┌──────────────┐        ┌────────────────────┐
+│ USERS        │             │ MOVIES       │        │ VIEW_EVENTS        │
+│──────────────│             │──────────────│        │────────────────────│
+│ id (PK)      │             │ id (PK)      │◀───────│ movie_id (logical) │
+│ username     │             │ title        │        │ user_id  (logical) │ ··▶ USERS.id
+│ email        │             │ genre        │        │ watch_duration_s   │     (cross-service,
+│ password     │             │ release_year │        │ viewed_at          │      no FK)
+│ role         │             │ view_count   │        └────────────────────┘
+│ created_at   │             │ rating       │
+│ last_login   │             │ …            │
+└──────────────┘             └──────────────┘
+```
 
 > **Indexing strategy:** every column on a hot path is indexed — `email`/`username` (login), `genre`/`title` (catalog filters), and `movie_id`/`user_id`/`viewed_at` (analytics aggregations).
 
@@ -52,6 +89,20 @@ Two services own data. The link from `VIEW_EVENT` to a user is a **logical refer
 
 Stateless login on the left; the analytics fan-out (parallel calls to both services, with derived KPIs and caching) on the right.
 
+```
+Login                              Analytics dashboard
+─────                              ───────────────────
+Browser                            Browser
+  │ POST /api/auth/login             │ GET /api/analytics/dashboard
+  ▼                                  ▼
+User Service                       Analytics Service
+  │ verify BCrypt                    ├── GET user-svc /api/auth/stats  ┐
+  │ sign JWT                         ├── GET movie-svc /api/movies/stats │ WebClient
+  ▼                                  │   (5s timeout, fallback on error) ┘
+{ token, role, userId }             │ derive KPIs + @Cacheable
+                                     ▼
+                                  { 12+ KPIs }
+```
 
 ---
 
@@ -117,6 +168,7 @@ Open **http://localhost:3000**
 ### Movie Service (8082)
 - Catalog (browse, search, filter by genre, trending)
 - Records view events (movieId, userId, watch duration)
+- Serves authentic public-domain posters (Wikimedia) with seeded view history
 - **Caching**: `@Cacheable` on hot endpoints; `@CacheEvict` on writes so view counts stay fresh
 - Stats endpoint: `GET /api/movies/stats`
 
@@ -137,5 +189,5 @@ Open **http://localhost:3000**
 | Read-path performance | DB indexes on hot columns, `@Cacheable`/`@CacheEvict`, HikariCP pool tuning (20–30), batch inserts (`order_inserts`, `batch_size: 50`) |
 | Resilient service-to-service calls | `WebClient` fan-out with per-call timeout + fallback to empty results |
 | React.js + Recharts dashboard | `frontend/src/pages/Dashboard.jsx` — multiple chart types, auto-refresh |
+| Polished glassmorphism UI | `frontend/src/styles.css` — frosted surfaces, blur, gradient borders; `Home.jsx` poster fallback |
 | 12+ operational KPIs | total users, active 24h, new users 7d, engagement rate, total movies, total views, views 24h, unique viewers 24h, watch hours, avg views/user, views by hour, top movies |
-
