@@ -1,0 +1,17 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: analytics-service
+  cache:
+    type: simple
+    cache-names: dashboard
+  main:
+    web-application-type: servlet
+
+services:
+  user:
+    url: http://localhost:8081
+  movie:
+    url: http://localhost:8082
