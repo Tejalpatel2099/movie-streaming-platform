@@ -139,6 +139,3 @@ Open **http://localhost:3000**
 | React.js + Recharts dashboard | `frontend/src/pages/Dashboard.jsx` — multiple chart types, auto-refresh |
 | 12+ operational KPIs | total users, active 24h, new users 7d, engagement rate, total movies, total views, views 24h, unique viewers 24h, watch hours, avg views/user, views by hour, top movies |
 
-> ℹ️ **A note for interviews:** if your resume cites specific numbers like *"5,000+ concurrent users"* or *"35% latency reduction,"* be ready to say how you measured them. The code contains the *techniques* that support those claims (pooling, caching, indexing, batching), but the exact figures need a load test (e.g. JMeter/k6) to cite honestly. Run one and you can keep the numbers with confidence — or talk about the techniques instead.
-
----
